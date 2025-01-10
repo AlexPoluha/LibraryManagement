@@ -1,0 +1,77 @@
+﻿@model LibraryManagement.Models.Book
+
+@{
+    ViewData["Title"] = "Создание книги";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3>Создание книги</h3>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create">
+                        <div class="form-group mb-3">
+                            <label asp-for="Title" class="form-label">Название книги</label>
+                            <input asp-for="Title" class="form-control" placeholder="Введите название книги" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="AuthorId" class="form-label">Автор</label>
+                            <select asp-for="AuthorId" class="form-control" asp-items="ViewBag.AuthorId">
+                                <option value="">Выберите автора</option>
+                            </select>
+                            <span asp-validation-for="AuthorId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group text-center">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-save"></i> Создать
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center">
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Назад к списку
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.querySelector("form");
+
+            form.addEventListener("submit", function (event) {
+                event.preventDefault(); 
+
+                const formData = new FormData(form);
+                const formObject = {};
+
+                formData.forEach((value, key) => {
+                    formObject[key] = value;
+                });
+                console.log("Данные формы:", formObject);
+
+                fetch(form.action, {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                        "RequestVerificationToken": document.querySelector('input[name="__RequestVerificationToken"]').value
+                    }
+                })
+                .then(response => {
+                    if (response.redirected) {
+                        window.location.href = response.url; 
+                    }
+                })
+                .catch(error => console.error("Ошибка при отправке формы:", error));
+            });
+        });
+    </script>
+}
